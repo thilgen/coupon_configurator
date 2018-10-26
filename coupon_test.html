@@ -137,10 +137,6 @@ table, td, th {
             } else if (tableRowLabels[0] == "currency") {
               inputElem.className += " coupon-currency coupon-currency" + "-" + tableRowLabels[1]
             }
-
-            if ("checkbox" == controlType) {
-              inputElem.addEventListener("click", onClickCheckbox)
-            }
             
             tdControls[jdx].appendChild(inputElem);
             break;
@@ -164,8 +160,6 @@ table, td, th {
 
   function onClickButtonGenerateJson() {
     console.trace("onClickButtonGenerateJson pressed!")
-
-    /* --- */
 
     var resultObj = {}
     resultObj.coupon_requires = {}
@@ -352,13 +346,6 @@ table, td, th {
       resultObj.coupon_requires.currencies = currencyArray
     }    
 
-/*
-    class="coupon-section-required coupon-product-support coupon-product-plan coupon-product-plan-any"
-    <input type="checkbox" id="required_support_plan_team" class="coupon-section-required coupon-product-support coupon-product-plan coupon-product-plan-team">
-    class="coupon-section-minimum coupon-product-support coupon-product-cost coupon-product-cost-usd"
-    class="coupon-section-required coupon-product-support coupon-product-agents coupon-product-agents"
-    */
-
     if (Object.keys(resultObj.coupon_requires.products).length == 0) {
       delete resultObj.coupon_requires.products
     }
@@ -377,60 +364,6 @@ table, td, th {
     console.trace(jsonResultStr)
 
     document.getElementById("jsonResultStr").innerText = jsonResultStr
-
-    /*
-    var requiredTerms = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-required coupon-term")
-
-    var requiredPaymentMethods = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-required coupon-payment_methods")
-
-    var requiredCurrency = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-required coupon-currency")
-
-    var requiredJson = generateJson(requiredProducts, requiredTerms, requiredPaymentMethods, requiredCurrency)
-
-    // *****
-
-    // N/A: minimumTerms
-    // N/A: minimumPaymentMethods
-    // N/A: minimumCurrency
-
-    var minimumProducts = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-minimum coupon-product")
-
-    var minimumTotalCosts = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-minimum coupon-total_cost")
-
-    var minimumJson = generateJson(minimumProducts, minimumTotalCosts)
-    */
-  }
-
-  function generateJson() {
-    products = arguments[0]
-    for (idx = 0 ; idx < products.length ; idx++) {
-      var idComponents = products[idx].id.split("_")
-      console.trace(idComponents)
-      // support | chat | talk | suite, plan | cost | agents, any | team | professional | enterprise
-
-    }
-    // serialize products
-    if (arguments.length == 2) {
-      minimumTotalCosts = arguments[1]
-      // serialize costs
-    } else {
-      requiredTerms  = arguments[1]
-      // serialize terms
-      requiredPaymentMethods = arguments[2]
-      // serialize payment methdos
-      requiredCurrency = arguments[3]
-      // serialize currencies
-    }
-  }
-
-  function onClickCheckbox(event) {
-/*    switch (event.srcElement.id) {
-      case "support_checkbox_required":
-      support_checkbox_required
-      support_checkbox_none
-      support_checkbox_required*/
-    console.trace("onClickCheckbox: " + event.srcElement.id)
-    console.trace(event.srcElement.id.split("_"))
   }
 
 </script>
@@ -448,7 +381,6 @@ table, td, th {
     <pre><code id="jsonResultStr" /></pre>
   </div>
 </div>
-
 
 </body>
 </html>
