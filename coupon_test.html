@@ -1,0 +1,454 @@
+<html>
+<head>
+<style>
+table {
+    border-collapse: collapse;
+}
+table, td, th {
+    border: 1px solid black;
+    text-align: center;
+}
+.columnStyle {
+    flex: 50%;
+}
+.rowStyle {
+    display: flex;
+}
+</style>
+</head>
+
+<body onload="onClickButtonReset()">
+
+<script>
+  
+  var couponConfigurationTable = [
+    [["support",         "plan",        "any"          ], [undefined,  "checkbox" ]],
+    [["support",         "plan",        "team"         ], ["checkbox", "checkbox" ]],
+    [["support",         "plan",        "professional" ], ["checkbox", "checkbox" ]],
+    [["support",         "plan",        "enterprise"   ], ["checkbox", "checkbox" ]],
+    [["support",         "cost",        "usd"          ], ["number",   undefined  ]],
+    [["support",         "cost",        "eur"          ], ["number",   undefined  ]],
+    [["support",         "cost",        "gbp"          ], ["number",   undefined  ]],
+    [["support",         "agents",      ""             ], ["number",   "number"   ]],
+    [["chat",            "plan",        "any"          ], [undefined,  "checkbox" ]],
+    [["chat",            "plan",        "team"         ], ["checkbox", "checkbox" ]],
+    [["chat",            "plan",        "professional" ], ["checkbox", "checkbox" ]],
+    [["chat",            "plan",        "enterprise"   ], ["checkbox", "checkbox" ]],
+    [["chat",            "cost",        "usd"          ], ["number",   undefined  ]],
+    [["chat",            "cost",        "eur"          ], ["number",   undefined  ]],
+    [["chat",            "cost",        "gbp"          ], ["number",   undefined  ]],
+    [["chat",            "agents",      ""             ], ["number",   "number"   ]],
+    [["talk",            "plan",        "any"          ], [undefined,  "checkbox" ]],
+    [["talk",            "plan",        "team"         ], ["checkbox", "checkbox" ]],
+    [["talk",            "plan",        "professional" ], ["checkbox", "checkbox" ]],
+    [["talk",            "plan",        "enterprise"   ], ["checkbox", "checkbox" ]],
+    [["talk",            "cost",        "usd"          ], ["number",   undefined  ]],
+    [["talk",            "cost",        "eur"          ], ["number",   undefined  ]],
+    [["talk",            "cost",        "gbp"          ], ["number",   undefined  ]],
+    [["talk",            "agents",      ""             ], ["number",   "number"   ]],
+    [["suite",           "plan",        "any"          ], [undefined,  "checkbox" ]],
+    [["suite",           "plan",        "professional" ], ["checkbox", "checkbox" ]],
+    [["suite",           "plan",        "enterprise"   ], ["checkbox", "checkbox" ]],
+    [["suite",           "cost",        "usd"          ], ["number",   undefined  ]],
+    [["suite",           "cost",        "eur"          ], ["number",   undefined  ]],
+    [["suite",           "cost",        "gbp"          ], ["number",   undefined  ]],
+    [["suite",           "agents",      ""             ], ["number",   "number"   ]],   
+    [["term",            "monthly",     ""             ], [undefined,  "checkbox" ]],
+    [["term",            "annual",      ""             ], [undefined,  "checkbox" ]],
+    [["payment_methods", "paypal",      ""             ], [undefined,  "checkbox" ]],
+    [["payment_methods", "credit_card", ""             ], [undefined,  "checkbox" ]],
+    [["payment_methods", "amex",        ""             ], [undefined,  "checkbox" ]],
+    [["payment_methods", "mastercard",  ""             ], [undefined,  "checkbox" ]],
+    [["payment_methods", "visa",        ""             ], [undefined,  "checkbox" ]],
+    [["payment_methods", "discover",    ""             ], [undefined,  "checkbox" ]],
+    [["total_cost",      "usd",         ""             ], ["number",   undefined  ]],
+    [["total_cost",      "eur",         ""             ], ["number",   undefined  ]],
+    [["total_cost",      "gbp",         ""             ], ["number",   undefined  ]],
+    [["currency",        "usd",         ""             ], [undefined,  "checkbox" ]],
+    [["currency",        "eur",         ""             ], [undefined,  "checkbox" ]],
+    [["currency",        "gbp",         ""             ], [undefined,  "checkbox" ]],
+  ];
+
+  var controlIdPrefix = [ 
+    "minimum", 
+    "required" 
+  ];
+
+  function onClickButtonReset() {
+    console.trace("onClickButtonReset pressed!")
+
+    var oldTableBody = document.getElementById("couponOptionsDyanmic").childNodes[1];
+
+    var tableBody = document.createElement('tbody');
+    tableBody.innerHTML = "<tr><th></th><th></th><th></th><th>Minimum</th><th>Requires</th></tr>"
+    oldTableBody.parentNode.replaceChild(tableBody, oldTableBody)
+
+    for (idx in couponConfigurationTable) {
+      var row = document.createElement('tr');
+
+      var tdLabels = [
+        document.createElement('td'),
+        document.createElement('td'),
+        document.createElement('td')
+      ]
+
+      var tdControls = [
+        document.createElement('td'),
+        document.createElement('td')
+      ]
+
+      var baseIdName = ""
+
+      var tableRowLabels = couponConfigurationTable[idx][0];
+      for (jdx = 0 ; jdx < tableRowLabels.length ; jdx++) {
+        var label = tableRowLabels[jdx];
+        tdLabels[jdx].appendChild(document.createTextNode(label));
+        if (label != "") {
+          if (baseIdName.length) baseIdName += "_"
+          baseIdName += label
+        }
+      }
+
+      var tableRowControls = couponConfigurationTable[idx][1];
+      for (jdx = 0 ; jdx < tableRowControls.length ; jdx++) {
+        var controlType = tableRowControls[jdx]
+        switch (typeof controlType) {
+          case "string":
+            var inputElem = document.createElement('input')
+            inputElem.type = controlType
+            inputElem.id = controlIdPrefix[jdx] + "_" + baseIdName
+
+            inputElem.className = "coupon-section-"+controlIdPrefix[jdx]
+            if (tableRowLabels[0] == "support" || tableRowLabels[0] == "chat" || 
+              tableRowLabels[0] == "talk" || tableRowLabels[0] == "suite") {
+              inputElem.className += " coupon-product" + "-" + tableRowLabels[0]
+              inputElem.className += " coupon-product" + "-" + tableRowLabels[1]
+              if ("plan" == tableRowLabels[1]) {
+                inputElem.className += " coupon-product-plan" + "-" + tableRowLabels[2]
+              } else if ("cost" == tableRowLabels[1]) {
+                inputElem.className += " coupon-product-cost" + "-" + tableRowLabels[2]
+              }
+            } else if (tableRowLabels[0] == "term") {
+              inputElem.className += " coupon-payment-term"
+            } else if (tableRowLabels[0] == "payment_methods") {
+              inputElem.className += " coupon-payment-method coupon-payment-method" + "-" + tableRowLabels[1]
+            } else if (tableRowLabels[0] == "total_cost") {
+              inputElem.className += " coupon-total-cost coupon-total-cost" + "-" + tableRowLabels[1]
+            } else if (tableRowLabels[0] == "currency") {
+              inputElem.className += " coupon-currency coupon-currency" + "-" + tableRowLabels[1]
+            }
+
+            if ("checkbox" == controlType) {
+              inputElem.addEventListener("click", onClickCheckbox)
+            }
+            
+            tdControls[jdx].appendChild(inputElem);
+            break;
+          case "undefined":
+            tdControls[jdx].appendChild(document.createTextNode("N/A"));
+            break
+        }
+      }
+
+      for (jdx = 0 ; jdx < tdLabels.length; jdx++ ) {
+        row.appendChild(tdLabels[jdx])
+      }
+
+      for (jdx = 0 ; jdx < tdControls.length; jdx++ ) {
+        row.appendChild(tdControls[jdx])
+      }
+
+      tableBody.appendChild(row)
+    }
+  }
+
+  function onClickButtonGenerateJson() {
+    console.trace("onClickButtonGenerateJson pressed!")
+
+    /* --- */
+
+    var resultObj = {}
+    resultObj.coupon_requires = {}
+    resultObj.coupon_requires.products = []
+    resultObj.coupon_minimum = {}
+    resultObj.coupon_minimum.products = []
+
+    var needs_usd = false;
+    var needs_eur = false;
+    var needs_gbp = false;
+
+    var productNames = ["support", "chat", "talk", "suite"]
+
+    var productSweeps = [
+      [resultObj.coupon_minimum.products, "coupon-section-minimum"],
+      [resultObj.coupon_requires.products, "coupon-section-required"]
+    ]
+
+    for (kdx = 0 ; kdx < productSweeps.length ; kdx++) {
+      product_results = productSweeps[kdx][0]
+      product_class = productSweeps[kdx][1]
+      for (jdx in productNames) {
+        var productName = productNames[jdx]
+        var productBlock = {}
+        productBlock.product = productName
+        productBlock.plans = []
+        var productPlans = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-product-plan coupon-product-" + productName + " " + product_class)
+        for (idx = 0 ; idx < productPlans.length; idx++) {
+          var elem = productPlans[idx]
+          if (elem.classList.contains("coupon-product-plan-any")) {
+            if (elem.checked) {
+              productBlock.plans = ['any']
+              break
+            }
+          } else {
+            var plan_names = elem.id.split("_")
+            if (plan_names.includes("team") && elem.checked) {
+              productBlock.plans.push("team")  
+            } else if (plan_names.includes("professional") && elem.checked) {
+              productBlock.plans.push("professional")  
+            } else if (plan_names.includes("enterprise") && elem.checked) {
+              productBlock.plans.push("enterprise") 
+            } 
+          }
+        }
+        if (productBlock.plans.length == 0) {
+          delete productBlock.plans
+        }
+
+        var productAgents = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-product-agents coupon-product-" + productName + " " + product_class)
+        if (productAgents[0].value) {
+          productBlock.agents = productAgents[0].value
+        }
+
+        var costs = {}
+        var productCost = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-product-cost coupon-product-" + productName + " " + product_class)
+        for (idx = 0 ; idx < productCost.length; idx++) {
+          var elem = productCost[idx]
+          var item_id_elems = elem.id.split("_")
+          if (item_id_elems.includes("usd") && elem.value) {
+            needs_usd = true
+            costs.usd = elem.value
+          } else if (item_id_elems.includes("eur") && elem.value) {
+            needs_eur = true
+            costs.eur = elem.value
+          } else if (item_id_elems.includes("gbp") && elem.value) {
+            needs_gbp = true
+            costs.gbp = elem.value
+          } 
+        }
+        if (Object.keys(costs).length != 0) {
+          productBlock.cost = costs
+        }
+
+        if (Object.keys(productBlock).length != 1) {
+          product_results.push(productBlock)
+        }
+      }
+    }
+
+    var termsArray = []
+    var requiredTerms = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-required coupon-payment-term")
+    for (idx = 0 ; idx < requiredTerms.length; idx++) {
+        var elem = requiredTerms[idx]
+        var term_values = elem.id.split("_")
+        if (term_values.includes("monthly") && elem.checked) {
+          termsArray.push("monthly")  
+        } else if (term_values.includes("annual") && elem.checked) {
+          termsArray.push("annual")  
+      }
+    }
+    if (termsArray.length) {
+      resultObj.coupon_requires.terms = termsArray
+    }
+
+    var totalCosts = {}
+    var totalCostsResults = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-minimum coupon-total-cost")
+    for (idx = 0 ; idx < totalCostsResults.length; idx++) {
+      var elem = totalCostsResults[idx]
+      var item_id_elems = elem.id.split("_")
+      if (item_id_elems.includes("usd") && elem.value) {
+        needs_usd = true
+        totalCosts.usd = elem.value
+      } else if (item_id_elems.includes("eur") && elem.value) {
+        needs_eur = true
+        totalCosts.eur = elem.value
+      } else if (item_id_elems.includes("gbp") && elem.value) {
+        needs_gbp = true
+        totalCosts.gbp = elem.value
+      } 
+    }
+    if (Object.keys(totalCosts).length != 0) {
+      resultObj.coupon_minimum.total_cost = totalCosts
+    }   
+
+    var paymentMethodsArray = []
+    var paymentMethods = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-required coupon-payment-method")
+    var CCArray = []
+    for (idx = 0 ; idx < paymentMethods.length; idx++) {
+      var elem = paymentMethods[idx]
+      if (elem.classList.contains("coupon-payment-method-credit_card")) {
+        if (elem.checked) {
+          CCArray.push("credit_card")
+        }
+      } else if (elem.classList.contains("coupon-payment-method-amex")) {
+        if (elem.checked) {
+          CCArray.push("amex")
+        }
+      } else if (elem.classList.contains("coupon-payment-method-mastercard")) {
+        if (elem.checked) {
+          CCArray.push("mastercard")
+        }
+      } else if (elem.classList.contains("coupon-payment-method-visa")) {
+        if (elem.checked) {
+          CCArray.push("visa")
+        }
+      } else if (elem.classList.contains("coupon-payment-method-discover")) {
+        if (elem.checked) {
+          CCArray.push("discover")
+        }
+      } else if (elem.classList.contains("coupon-payment-method-paypal")) {
+        if (elem.checked) {
+          paymentMethodsArray.push("paypal")
+        }
+      }
+    }
+    if (CCArray.includes("credit_card")) {
+      paymentMethodsArray.push("credit_card")
+    } else {
+      paymentMethodsArray = paymentMethodsArray.concat(CCArray)
+    }
+    if (paymentMethodsArray.length) {
+      resultObj.coupon_requires.payment_methods = paymentMethodsArray
+    }
+
+    var currencyArray = []
+    var currencies = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-required coupon-currency")
+    for (idx = 0 ; idx < currencies.length; idx++) {
+      var elem = currencies[idx]
+      if (elem.classList.contains("coupon-currency-usd")) {
+        if (elem.checked) {
+          currencyArray.push("usd")
+        }
+      } else if (elem.classList.contains("coupon-currency-eur")) {
+        if (elem.checked) {
+          currencyArray.push("eur")
+        }
+      } else if (elem.classList.contains("coupon-currency-gbp")) {
+        if (elem.checked) {
+          currencyArray.push("gbp")
+        }
+      }
+    }
+    if (needs_usd && !currencyArray.includes("usd")) {
+      currencyArray.push("usd")
+    }
+    if (needs_eur && !currencyArray.includes("eur")) {
+      currencyArray.push("eur")
+    }
+    if (needs_gbp && !currencyArray.includes("gbp")) {
+      currencyArray.push("gbp")
+    }
+    if (currencyArray.length) {
+      resultObj.coupon_requires.currencies = currencyArray
+    }    
+
+/*
+    class="coupon-section-required coupon-product-support coupon-product-plan coupon-product-plan-any"
+    <input type="checkbox" id="required_support_plan_team" class="coupon-section-required coupon-product-support coupon-product-plan coupon-product-plan-team">
+    class="coupon-section-minimum coupon-product-support coupon-product-cost coupon-product-cost-usd"
+    class="coupon-section-required coupon-product-support coupon-product-agents coupon-product-agents"
+    */
+
+    if (Object.keys(resultObj.coupon_requires.products).length == 0) {
+      delete resultObj.coupon_requires.products
+    }
+    if (Object.keys(resultObj.coupon_requires).length == 0) {
+      delete resultObj.coupon_requires
+    }
+   
+    if (Object.keys(resultObj.coupon_minimum.products).length == 0) {
+      delete resultObj.coupon_minimum.products
+    }
+    if (Object.keys(resultObj.coupon_minimum).length == 0) {
+      delete resultObj.coupon_minimum
+    }
+
+    jsonResultStr = JSON.stringify(resultObj,null,2)
+    console.trace(jsonResultStr)
+
+    document.getElementById("jsonResultStr").innerText = jsonResultStr
+
+    /*
+    var requiredTerms = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-required coupon-term")
+
+    var requiredPaymentMethods = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-required coupon-payment_methods")
+
+    var requiredCurrency = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-required coupon-currency")
+
+    var requiredJson = generateJson(requiredProducts, requiredTerms, requiredPaymentMethods, requiredCurrency)
+
+    // *****
+
+    // N/A: minimumTerms
+    // N/A: minimumPaymentMethods
+    // N/A: minimumCurrency
+
+    var minimumProducts = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-minimum coupon-product")
+
+    var minimumTotalCosts = document.getElementById("couponOptionsDyanmic").getElementsByClassName("coupon-section-minimum coupon-total_cost")
+
+    var minimumJson = generateJson(minimumProducts, minimumTotalCosts)
+    */
+  }
+
+  function generateJson() {
+    products = arguments[0]
+    for (idx = 0 ; idx < products.length ; idx++) {
+      var idComponents = products[idx].id.split("_")
+      console.trace(idComponents)
+      // support | chat | talk | suite, plan | cost | agents, any | team | professional | enterprise
+
+    }
+    // serialize products
+    if (arguments.length == 2) {
+      minimumTotalCosts = arguments[1]
+      // serialize costs
+    } else {
+      requiredTerms  = arguments[1]
+      // serialize terms
+      requiredPaymentMethods = arguments[2]
+      // serialize payment methdos
+      requiredCurrency = arguments[3]
+      // serialize currencies
+    }
+  }
+
+  function onClickCheckbox(event) {
+/*    switch (event.srcElement.id) {
+      case "support_checkbox_required":
+      support_checkbox_required
+      support_checkbox_none
+      support_checkbox_required*/
+    console.trace("onClickCheckbox: " + event.srcElement.id)
+    console.trace(event.srcElement.id.split("_"))
+  }
+
+</script>
+
+<button onclick="onClickButtonReset()">Reset</button>
+<button onclick="onClickButtonGenerateJson()">Generate Json</button>
+<br><br>
+<div class="rowStyle">
+  <div class="columnStyle">
+    <table id="couponOptionsDyanmic">
+    <tr></tr>
+    </table>
+  </div>
+  <div class="columnStyle">
+    <pre><code id="jsonResultStr" /></pre>
+  </div>
+</div>
+
+
+</body>
+</html>
